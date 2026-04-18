@@ -1,0 +1,16 @@
+# ~/kubernetes-learning/03-pods/namespaces.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev
+  labels:
+    env: development
+    team: backend
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: staging
+  labels:
+    env: staging
+    team: backend

@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sidecar-demo
+spec:
+  containers:
+    - name: main-app
+      image: busybox:1.35
+      command: ['sh', '-c', 'while true; do echo "$(date): app log entry" >> /logs/app.log; sleep 2; done']
+      volumeMounts:
+        - name: logs
+          mountPath: /logs
+
+    - name: log-shipper
+      image: busybox:1.35
+      command: ['sh', '-c', 'tail -f /logs/app.log']
+      volumeMounts:
+        - name: logs
+          mountPath: /logs
+
+  volumes:
+    - name: logs
+      emptyDir: {}
