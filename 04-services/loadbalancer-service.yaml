@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-lb
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nbl"
+spec:
+  type: LoadBalancer
+  selector:
+    app: backend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
