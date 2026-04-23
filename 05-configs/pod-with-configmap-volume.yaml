@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app-vol-demo
+spec:
+  containers:
+    - name: app
+      image: nginx:alpine
+      volumeMounts:
+        - name: config-volume
+          mountPath: /etc/nginx/conf.d/
+          readOnly: true
+
+        - name: props-volume
+          mountPath: /etc/app/
+          readOnly: true
+
+  volumes:
+    - name: config-volume
+      configMap:
+        name: app-config
+        items:
+          - key: nginx.conf
+            path: default.conf
+
+    - name: props-volume
+      configMap:
+        name: app-config
+        items:
+          - key: app.properties
+            path: app.properties

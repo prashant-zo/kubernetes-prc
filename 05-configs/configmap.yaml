@@ -9,7 +9,7 @@ data:
   LOG_LEVEL: "info"
   DB_HOST: "postgres-svc"
 
-  nginx-conf: |
+  nginx.conf: |
     server {
       listen 80;
       server_name localhost;
