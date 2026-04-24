@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hostpath-demo
+spec:
+  containers:
+    - name: app
+      image: nginx:alpine
+      volumeMounts:
+        - name: host-logs
+          mountPath: /var/log/nginx-host
+
+  volumes:
+    - name: host-logs
+      hostPath:
+        path: /tmp/nginx-logs
+        type: DirectoryOrCreate
