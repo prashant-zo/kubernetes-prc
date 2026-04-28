@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: parallel-job
+spec:
+  completions: 6
+  parallelism: 2
+  backoffLimit: 2
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: worker
+          image: busybox:1.35
+          command:
+            - 'sh'
+            - '-c'
+            - |
+              echo "worker pod $(hostname) processing item..."
+              sleep $((RANDOM % 5 + 3))
+              echo "Worker $(hostname) done!"
+          resources:
+            requests:
+              memory: "32Mi"
+              cpu: "50m"

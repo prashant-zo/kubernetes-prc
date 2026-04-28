@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hello-job
+spec:
+  completions: 1
+  parallelism: 1
+  backoffLimit: 3
+
+  ttlSecondsAfterFinished: 300
+
+  template:
+    spec:
+      restartPolicy: OnFailure
+
+      containers:
+        - name: hello
+          image: busybox:1.35
+          command: ['sh', '-c', 'echo "Job started at $(date)"; sleep 5; echo "Job Completed!"']
+          resources:
+            requests:
+              memory: "32Mi"
+              cpu: "50m"

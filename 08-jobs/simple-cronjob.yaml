@@ -1,0 +1,35 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: hello-cronjob
+spec:
+  schedule: "*/2 * * * *"
+  timeZone: "Asia/Kolkata"
+
+  concurrencyPolicy: Forbid
+
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+
+  startingDeadlineSeconds: 60
+
+  suspend: False
+  
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      ttlSecondsAfterFinished: 120
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: hello
+              image: busybox:1.35
+              command:
+                - 'sh'
+                - '-c'
+                - 'echo "Cornjob running at $(date)"; sleep 5; echo "Done!"'
+              resources:
+                requests:
+                  memory: "32Mi"
+                  cpu: "50m"

@@ -1,0 +1,54 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: postgres-backup
+spec:
+  schedule: "0 2 * * *"
+  timeZone: "Asia/Kolkata"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 7
+  failedJobsHistoryLimit: 3
+
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      ttlSecondsAfterFinished: 86400
+      containers:
+        - name: backup
+          image: postgres:15-alpine
+          command:
+            - 'sh'
+            - '-c'
+            - |
+              BACKUP_FILE="/backups/backup-$(date +%Y%m%d-%H%M%S).sql"
+              echo "Starting backup to $BACKUP_FILE"
+              pg_dump -h postgres-svc -U $PGUSER -d $PGDATABASE > $BACKUP_FILE
+              echo "Backup complete: $(du -sh $BACKUP_FILE)"
+
+          env:
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
+            - name: PGPASSWORD
+              valueFrom:
+               secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+            - name: PGDATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_DB
+          volumeMounts:
+            - name: backup-storage
+              mountPath: /backups
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+      volumes:
+        - name: backup-storage
+          persistentVolumeClaim:
+            claimName: backup-pvc

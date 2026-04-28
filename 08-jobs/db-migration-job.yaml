@@ -1,0 +1,48 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-migration-v2
+  labels:
+    app: myapp
+    version: "2.0"
+spec:
+  completions: 1
+  backoffLimit: 2
+  ttlSecondsAfterFinished: 600
+
+  template:
+    spec:
+      restartPolicy: Never
+      initContainers:
+        - name: wait-for-db
+          image: busybox:1.35
+          command:
+            - 'sh'
+            - '-c'
+            - |
+              until nc -z postgres-svc 5432; do
+              echo "Waiting for postgres...";
+              sleep 3;
+              done
+              echo "Postgres is ready!"
+
+      containers:
+        - name: migrate
+          image: busybox:1.35
+          command:
+            - 'sh'
+            - '-c'
+            - |
+              echo "Running database migration v2.0..."
+              echo "Creating tables..."
+              sleep 3
+              echo "Seeding initial data..."
+              sleep 2
+              echo "Migration complete!"
+          env:
+            - name: DB_HOST
+              value: "postgres-svc"
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
