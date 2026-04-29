@@ -1,14 +1,19 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: host-ingress
+  name: tls-ingress
   annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   ingressClassName: nginx
 
+  tls:
+    - hosts:
+        - myapp.local
+      secretName: myapp-tls
+
   rules:
-    - host: app.mycompany.local
+    - host: myapp.local
       http:
         paths:
           - path: /
@@ -18,24 +23,10 @@ spec:
                 name: frontend-svc
                 port:
                   number: 80
-
-    - host: api.mycompany.local
-      http:
-        paths:
-          - path: /
+          - path: /api
             pathType: Prefix
             backend:
               service:
                 name: api-svc
-                port:
-                  number: 80
-    - host: admin.mycompany.local
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: admin-svc
                 port:
                   number: 80
