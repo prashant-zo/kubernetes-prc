@@ -1,0 +1,44 @@
+# --- Bind pod-reader Role to our ServiceAccount ---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: app-sa-pod-reader
+  namespace: default
+subjects:
+  - kind: ServiceAccount
+    name: app-service-account
+    namespace: default
+roleRef:
+  kind: Role
+  name: pod-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# --- Bind deployment-manager to a human user ---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: prashant-deployment-manager
+  namespace: default
+subjects:
+  - kind: User
+    name: prashant
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: deployment-manager
+  apiGroup: rbac.authorization.k8s.io
+---
+# --- Bind a ClusterRole to SA but only in one namespace ---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: app-sa-monitoring
+  namespace: default
+subjects:
+  - kind: ServiceAccount
+    name: app-service-account
+    namespace: default
+roleRef:
+  kind: ClusterRole
+  name: monitoring-role
+  apiGroup: rbac.authorization.k8s.io
