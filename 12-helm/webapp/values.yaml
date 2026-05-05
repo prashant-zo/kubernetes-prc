@@ -1,0 +1,61 @@
+replicaCount: 2
+
+image:
+  repository: nginx
+  tag: 'alpine'
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 80
+
+ingress:
+  enabled: false
+  className: "nginx"
+  host: "webapp.local"
+  tls:
+    enabled: false
+    secretName: "webapp-tls"
+
+resources:
+  requests:
+    memory: "64Mi"
+    cpu: "100m"
+  limits:
+    memory: "128Mi"
+    cpu: "200m"
+
+autoscaling:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 20
+  targetCPUUtilizationPercentage: 60
+
+env:
+  APP_ENV: "production"
+  LOG_LEVEL: "info"
+
+configMap:
+  enabled: true
+  data:
+    APP_PORT: "80"
+    CACHE_TTL: "300"
+
+serviceAccount:
+  create: true
+  name: ""
+
+Probes:
+  liveness:
+    path: /
+    initialDelaySeconds: 5
+    periodSeconds: 10
+  readiness:
+    path: /
+    initialDelaySeconds: 3
+    periodSeconds: 5
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
