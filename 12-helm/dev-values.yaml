@@ -1,0 +1,18 @@
+replicaCount: 1
+image:
+  tag: "1.24-alpine"
+env:
+  APP_ENV: "development"
+  LOG_LEVEL: "debug"
+resources:
+  requests:
+    memory: "32Mi"
+    cpu: "50m"
+  limits:
+    memory: "64Mi"
+    cpu: "100m"
+autoscaling:
+  enabled: false
+ingress:
+  enabled: true
+  host: "dev.webapp.local"

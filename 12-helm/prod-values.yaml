@@ -1,0 +1,24 @@
+replicaCount: 3
+image:
+  tag: "1.25-alpine"
+env:
+  APP_ENV: "production"
+  LOG_LEVEL: "warn"
+resources:
+  requests:
+    memory: "128Mi"
+    cpu: "200m"
+  limits:
+    memory: "256Mi"
+    cpu: "500m"
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 20
+  targetCPUUtilizationPercentage: 60
+ingress:
+  enabled: true
+  host: "webapp.company.com"
+  tls:
+    enabled: true
+    secretName: "webapp-tls"

@@ -46,7 +46,7 @@ serviceAccount:
   create: true
   name: ""
 
-Probes:
+probes:
   liveness:
     path: /
     initialDelaySeconds: 5
@@ -59,3 +59,6 @@ Probes:
 nodeSelector: {}
 tolerations: []
 affinity: {}
+
+httpRoute:
+  enabled: false
